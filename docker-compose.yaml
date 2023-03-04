@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  db:
+    image: mysql:8.0.32
+    environment:
+      MYSQL_DATABASE: exp
+      MYSQL_USER: exp
+      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: pass
+    restart: always
+  app:
+    build:
+      dockerfile: ./Dockerfile
+    environment:
+      PORT: 3000
+      DB_STR: exp:pass@tcp(db)/exp
+    restart: always
+    depends_on:
+      - db
