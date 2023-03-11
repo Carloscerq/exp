@@ -4,6 +4,8 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 func main() {
@@ -17,5 +19,25 @@ func main() {
 		logger.Fatal("Invalid operation")
 	}
 
+	path, err := os.Getwd()
+	if err != nil {
+		logger.Fatal(err)
+	}
+	path = path + "/migrations"
 
+	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			logger.Fatal(err)
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		if strings.Contains(path, flag_value) {
+			logger.Println(path)
+		}
+
+		return nil
+	})
 }
