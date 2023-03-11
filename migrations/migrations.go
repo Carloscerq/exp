@@ -1,7 +1,7 @@
 package migrations
 
 import (
-  "database/sql"
+	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
@@ -28,16 +28,23 @@ func Migrate(f string, db *sql.DB) {
 			return nil
 		}
 
-		if strings.Contains(path, f) {
+		if strings.Contains(path, f+".sql") {
 			logger.Println(path)
-      data_binary, err := os.ReadFile(path)
+			data_binary, err := os.ReadFile(path)
 
-      if err != nil {
-        logger.Fatal(err)
-      }
+			if err != nil {
+				logger.Fatal(err)
+			}
 
-      data := string(data_binary)
-      logger.Println(data) 
+			data := string(data_binary)
+			res, err := (*db).Exec(data)
+
+			if err != nil {
+				logger.Fatal(err)
+			}
+
+			logger.Println(data)
+			logger.Println(res)
 		}
 
 		return nil
