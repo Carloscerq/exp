@@ -1,23 +1,17 @@
-package main
+package migrations
 
 import (
-	"flag"
+  "database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func main() {
+func Migrate(f string, db *sql.DB) {
 	logger := log.New(os.Stderr, "MIGRATIONS: ", log.Ldate|log.Ltime|log.Lshortfile)
 	logger.Println("Running migrations...")
-
-	flag_value_pointer := flag.String("action", "", "")
-	flag.Parse()
-	flag_value := string(*flag_value_pointer)
-	if flag_value != "up" && flag_value != "down" {
-		logger.Fatal("Invalid operation")
-	}
 
 	path, err := os.Getwd()
 	if err != nil {
@@ -34,8 +28,16 @@ func main() {
 			return nil
 		}
 
-		if strings.Contains(path, flag_value) {
+		if strings.Contains(path, f) {
 			logger.Println(path)
+      data_binary, err := os.ReadFile(path)
+
+      if err != nil {
+        logger.Fatal(err)
+      }
+
+      data := string(data_binary)
+      logger.Println(data) 
 		}
 
 		return nil
